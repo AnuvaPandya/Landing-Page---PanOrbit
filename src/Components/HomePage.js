@@ -3,6 +3,7 @@ import ProfilePage from "./ProfilePage";
 import axios from "axios";
 import { Routes, Route } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -10,8 +11,8 @@ const Home = () => {
   const [data, setData] = useState([]);
   const [error, setError] = useState(false);
 
-  const handleUsersList = () => {
-    axios.post("https://panorbit.in/api/users.json").then((response) => {
+  useEffect(
+    (axios.post("https://panorbit.in/api/users.json").then((response) => {
       setData(response.data.users);
       setLoading(false);
       console.log(response.data.users);
@@ -19,30 +20,37 @@ const Home = () => {
       console.log("Something went wrong!");
       setData([]);
       setLoading(false);
-    };
-  };
-  return (
-    <div>
-      <button style={{ color: "white" }} onClick={handleUsersList}>
-        List
-      </button>
+    }),
+    []
+  );
+
+  // };
+  return(
+  // loading ? (
+  //   "Loading..."
+  // ) : error ? (
+  //   "Something went wrong!"
+  // ) : (
+    <div className="home">
       {data.map((item, id) => {
         return (
           <div>
-            <tr
+            <div
               key={id}
-              onClick={() => navigate("../profile-page", { replace: true })}
+              onClick={() => navigate(`../profile-page/`, { replace: true })}
             >
-              <td>{item.profilepicture}</td>
-              <td>{item.name}</td>
-            </tr>
+              <img
+                className=".home-img"
+                src={item.profilepicture}
+                alt="Profile-Picture"
+                height={50}
+                width={50}
+              />
+              <div className="home-name">{item.name}</div>
+            </div>
           </div>
         );
       })}
-
-      <Routes>
-        <Route path="/profile-page" element={<ProfilePage />} />
-      </Routes>
     </div>
   );
 };
